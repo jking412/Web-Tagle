@@ -10,8 +10,9 @@ import (
 
 func Register(r *gin.Engine) {
 	r.Use(sessions.Sessions("mysession", session.Store))
+	r.Use(middleware.Cors())
 
-	r.GET("/ping", ping)
+	r.Any("/ping", ping)
 
 	userGroup := r.Group("/user")
 	{
@@ -20,7 +21,10 @@ func Register(r *gin.Engine) {
 	}
 
 	r.Use(middleware.Auth())
-
+	habitGroup := r.Group("/habit")
+	{
+		habitGroup.POST("/create", controller.CreateHabit)
+	}
 }
 
 func ping(c *gin.Context) {

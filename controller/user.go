@@ -4,7 +4,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-tagle/model"
-	"go-tagle/pkg/validate"
+	"go-tagle/pkg/request"
 	"net/http"
 )
 
@@ -27,7 +27,7 @@ func Register(c *gin.Context) {
 		})
 		return
 	}
-	errs := validate.ValidateUserRegisterReq(userRegisterReq)
+	errs := request.ValidateUserRegisterReq(userRegisterReq)
 	if len(errs) > 0 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"msg": errs,
@@ -57,8 +57,13 @@ func Register(c *gin.Context) {
 		})
 		return
 	}
+	user, _ = (&model.User{Username: userRegisterReq.Username}).GetUserByUsername()
 	session := sessions.Default(c)
 	session.Set("userId", user.Id)
+	session.Options(sessions.Options{
+		MaxAge:   3600,
+		HttpOnly: true,
+	})
 	session.Save()
 	c.JSON(http.StatusOK, gin.H{
 		"msg":  "注册成功",
@@ -72,7 +77,7 @@ func Login(c *gin.Context) {
 	if userId != nil {
 		user, err := (&model.User{
 			Id: userId.(int),
-		}).GetByUserId()
+		}).GetUserById()
 		if err == nil {
 			c.JSON(http.StatusOK, gin.H{
 				"msg":  "已登录",
@@ -88,7 +93,7 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	errs := validate.ValidateUserLoginReq(userLoginReq)
+	errs := request.ValidateUserLoginReq(userLoginReq)
 	if len(errs) > 0 {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"msg": errs,
@@ -101,7 +106,7 @@ func Login(c *gin.Context) {
 		email: userLoginReq.Account,
 	}
 	var user *model.User
-	if errs = validate.ValidateEmail(&email); len(errs) == 0 {
+	if errs = request.ValidateEmail(&email); len(errs) == 0 {
 		user = &model.User{
 			Email:    userLoginReq.Account,
 			Password: userLoginReq.Password,
@@ -113,7 +118,16 @@ func Login(c *gin.Context) {
 		}
 	}
 	if ok := user.CheckPassword(); ok {
+		if user.Username == "" {
+			user, _ = (&model.User{Email: userLoginReq.Account}).GetUserByEmail()
+		} else {
+			user, _ = (&model.User{Username: userLoginReq.Account}).GetUserByUsername()
+		}
 		session.Set("userId", user.Id)
+		session.Options(sessions.Options{
+			MaxAge:   3600,
+			HttpOnly: true,
+		})
 		session.Save()
 		c.JSON(http.StatusOK, gin.H{
 			"msg":  "登录成功",

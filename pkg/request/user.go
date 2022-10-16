@@ -1,4 +1,4 @@
-package validate
+package request
 
 import "github.com/thedevsaddam/govalidator"
 

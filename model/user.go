@@ -8,11 +8,12 @@ import (
 )
 
 type User struct {
-	Id       int    `json:"id;omitempty" gorm:"column:id;primaryKey;autoIncrement"`
-	Username string `json:"username" gorm:"column:username"`
-	Password string `json:"password" gorm:"column:password"`
-	Email    string `json:"email" gorm:"column:email"`
-	Salt     string `json:"-" gorm:"column:salt"`
+	Id       int     `json:"id;omitempty" gorm:"column:id;primaryKey;autoIncrement"`
+	Username string  `json:"username" gorm:"column:username;type:varchar(255)"`
+	Password string  `json:"password" gorm:"column:password;type:varchar(255)"`
+	Email    string  `json:"email" gorm:"column:email;type:varchar(255)"`
+	Salt     string  `json:"-" gorm:"column:salt;type:varchar(255)"`
+	Habits   []Habit `json:"habits" gorm:"foreignKey:UserId"`
 }
 
 func (u *User) TableName() string {
@@ -27,9 +28,21 @@ func (u *User) Create() error {
 	return nil
 }
 
-func (u *User) GetByUserId() (User, error) {
-	var user User
+func (u *User) GetUserById() (*User, error) {
+	var user *User
 	err := database.DB.Where("id = ?", u.Id).First(&user).Error
+	return user, err
+}
+
+func (u *User) GetUserByUsername() (*User, error) {
+	var user *User
+	err := database.DB.Where("username = ?", u.Username).First(&user).Error
+	return user, err
+}
+
+func (u *User) GetUserByEmail() (*User, error) {
+	var user *User
+	err := database.DB.Where("email = ?", u.Email).First(&user).Error
 	return user, err
 }
 
@@ -48,6 +61,12 @@ func (u *User) IsExistEmail() bool {
 func (u *User) DeleteUserByUsername() error {
 	err := database.DB.Where("username=?", u.Username).Delete(&User{}).Error
 	return err
+}
+
+func (u *User) GetAllHabits() ([]Habit, error) {
+	var habits []Habit
+	err := database.DB.Model(u).Association("Habits").Find(&habits)
+	return habits, err
 }
 
 func (u *User) CheckPassword() bool {

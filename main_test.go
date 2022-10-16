@@ -2,12 +2,20 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-tagle/pkg/encrypt"
+	"go-tagle/boot"
+	"go-tagle/model"
+	"go-tagle/pkg/test"
+	"go-tagle/pkg/viperlib"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	boot.Initialize()
+	m.Run()
+}
 
 func TestPing(t *testing.T) {
 	a := assert.New(t)
@@ -19,8 +27,14 @@ func TestPing(t *testing.T) {
 }
 
 func TestRegister(t *testing.T) {
+	user := &model.User{Username: "test"}
+
+	if user.IsExistUsername() {
+		user.DeleteUserByUsername()
+	}
+
 	a := assert.New(t)
-	req, _ := http.NewRequest("POST", "http://localhost:8000/user/register", strings.NewReader(`{"username":"test","password":"123456","email":"3220293029@163.com"}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/user/register", strings.NewReader(`{"username":"test","password":"123456","email":"3220293029@163.com"}`))
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	a.Nil(err)
@@ -32,7 +46,7 @@ func TestRegister(t *testing.T) {
 
 func TestLogin(t *testing.T) {
 	a := assert.New(t)
-	req, _ := http.NewRequest("POST", "http://localhost:8000/user/login", strings.NewReader(`{"account":"test","password":"123456"}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/user/login", strings.NewReader(`{"account":"test","password":"123456"}`))
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	a.Nil(err)
@@ -40,8 +54,17 @@ func TestLogin(t *testing.T) {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	t.Log(string(body))
+	t.Log(resp.Header.Get("Set-Cookie"))
+	test.CreateHabit(resp.Header.Get("Set-Cookie"))
 }
 
-func TestEncrypt(t *testing.T) {
-	t.Log(encrypt.EncryptPassword("123456h7ZsdKO6WEtvHIEqRFHHnhJ5X9sNRe0z"))
+func TestGetAllHabits(t *testing.T) {
+	user, _ := (&model.User{Username: "test"}).GetUserByUsername()
+	habits, _ := user.GetAllHabits()
+	t.Log(habits)
+}
+
+func TestTemp(t *testing.T) {
+	test.CreateHabit("")
+
 }

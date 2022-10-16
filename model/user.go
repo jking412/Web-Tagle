@@ -1,14 +1,13 @@
 package model
 
 import (
-	"fmt"
 	"go-tagle/pkg/database"
 	"go-tagle/pkg/encrypt"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	Id       int     `json:"id;omitempty" gorm:"column:id;primaryKey;autoIncrement"`
+	Id       int     `json:"id,omitempty" gorm:"column:id;primaryKey;autoIncrement"`
 	Username string  `json:"username" gorm:"column:username;type:varchar(255)"`
 	Password string  `json:"password" gorm:"column:password;type:varchar(255)"`
 	Email    string  `json:"email" gorm:"column:email;type:varchar(255)"`
@@ -22,11 +21,25 @@ func (u *User) TableName() string {
 
 func (u *User) Create() error {
 	if err := database.DB.Create(u).Error; err != nil {
-		fmt.Println("创建用户失败")
 		return err
 	}
 	return nil
 }
+
+//func (u *User) Create() error {
+//	tx := database.DB.Begin()
+//	defer func() {
+//		if r := recover(); r != nil {
+//			tx.Rollback()
+//		}
+//	}()
+//	if err := tx.Create(u).Error; err != nil {
+//		tx.Rollback()
+//		fmt.Println("创建用户失败")
+//		return err
+//	}
+//	return tx.Commit().Error
+//}
 
 func (u *User) GetUserById() (*User, error) {
 	var user *User

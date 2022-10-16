@@ -6,7 +6,7 @@ import (
 )
 
 type Habit struct {
-	Id             int    `json:"id;omitempty" gorm:"column:id;primaryKey;autoIncrement"`
+	Id             int    `json:"id,omitempty" gorm:"column:id;primaryKey;autoIncrement"`
 	Name           string `json:"name" gorm:"column:name;type:varchar(255)"`
 	Desc           string `json:"desc" gorm:"column:desc;type:varchar(255)"`
 	Difficulty     int    `json:"difficulty" gorm:"column:difficulty;type:int"`

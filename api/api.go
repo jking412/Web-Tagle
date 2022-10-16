@@ -23,7 +23,12 @@ func Register(r *gin.Engine) {
 	r.Use(middleware.Auth())
 	habitGroup := r.Group("/habit")
 	{
+		habitGroup.POST("/all", controller.GetAllHabits)
 		habitGroup.POST("/create", controller.CreateHabit)
+		habitGroup.POST("/update", controller.UpdateHabit)
+		habitGroup.POST("/finish", controller.UpdateHabitFinishedTime)
+		habitGroup.POST("/unfinish", controller.UpdateHabitUnfinishedTime)
+		habitGroup.POST("/delete", controller.DeleteHabit)
 	}
 }
 

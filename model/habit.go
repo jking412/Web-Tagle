@@ -29,7 +29,7 @@ func (h *Habit) Create() error {
 }
 
 func (h *Habit) Update() error {
-	if err := database.DB.Model(&Habit{}).Updates(h).Error; err != nil {
+	if err := database.DB.Model(&Habit{}).Where("id = ?", h.Id).Updates(h).Error; err != nil {
 		logger.WarnString("database", "更新习惯失败", err.Error())
 		return err
 	}

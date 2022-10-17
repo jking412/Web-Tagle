@@ -22,6 +22,16 @@ type UpdateHabitReq struct {
 	UnFinishedTime int    `json:"unfinishedTime" valid:"unfinishedTime"`
 }
 
+type UpdateHabitFinishedTimeReq struct {
+	Id           int `json:"id,omitempty" valid:"id"`
+	FinishedTime int `json:"finishedTime" valid:"finishedTime"`
+}
+
+type UpdateHabitUnfinishedTimeReq struct {
+	Id             int `json:"id,omitempty" valid:"id"`
+	UnfinishedTime int `json:"unfinishedTime" valid:"unfinishedTime"`
+}
+
 type DeleteHabitReq struct {
 	Id int `json:"id" valid:"id"`
 }
@@ -102,22 +112,16 @@ func UpdateHabit(c *gin.Context) {
 }
 
 func UpdateHabitFinishedTime(c *gin.Context) {
-	updateHabitReq := &UpdateHabitReq{}
-	if err := c.ShouldBindJSON(&updateHabitReq); err != nil {
+	updateUnfinishedTime := &UpdateHabitUnfinishedTimeReq{}
+	if err := c.ShouldBindJSON(&updateUnfinishedTime); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"msg": "JSON格式错误",
 		})
 		return
 	}
 	habit := &model.Habit{
-		Id:             updateHabitReq.Id,
-		Name:           updateHabitReq.Name,
-		Desc:           updateHabitReq.Desc,
-		Difficulty:     updateHabitReq.Difficulty,
-		Tag:            updateHabitReq.Tag,
-		UserId:         updateHabitReq.UserId,
-		FinishedTime:   updateHabitReq.FinishedTime,
-		UnFinishedTime: updateHabitReq.UnFinishedTime,
+		Id:           updateUnfinishedTime.Id,
+		FinishedTime: updateUnfinishedTime.UnfinishedTime,
 	}
 	if err := habit.UpdateFinishedTime(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -126,28 +130,22 @@ func UpdateHabitFinishedTime(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg":   "更新成功",
-		"habit": habit,
+		"msg":          "更新成功",
+		"finishedTime": habit.FinishedTime,
 	})
 }
 
 func UpdateHabitUnfinishedTime(c *gin.Context) {
-	updateHabitReq := &UpdateHabitReq{}
-	if err := c.ShouldBindJSON(&updateHabitReq); err != nil {
+	updateHabitUnfinishedTimeReq := &UpdateHabitFinishedTimeReq{}
+	if err := c.ShouldBindJSON(&updateHabitUnfinishedTimeReq); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"msg": "JSON格式错误",
 		})
 		return
 	}
 	habit := &model.Habit{
-		Id:             updateHabitReq.Id,
-		Name:           updateHabitReq.Name,
-		Desc:           updateHabitReq.Desc,
-		Difficulty:     updateHabitReq.Difficulty,
-		Tag:            updateHabitReq.Tag,
-		UserId:         updateHabitReq.UserId,
-		FinishedTime:   updateHabitReq.FinishedTime,
-		UnFinishedTime: updateHabitReq.UnFinishedTime,
+		Id:             updateHabitUnfinishedTimeReq.Id,
+		UnFinishedTime: updateHabitUnfinishedTimeReq.FinishedTime,
 	}
 	if err := habit.UpdateUnfinishedTime(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -156,8 +154,8 @@ func UpdateHabitUnfinishedTime(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg":   "更新成功",
-		"habit": habit,
+		"msg":            "更新成功",
+		"unfinishedTime": habit.UnFinishedTime,
 	})
 }
 

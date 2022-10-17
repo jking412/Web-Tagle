@@ -54,17 +54,17 @@ func TestLogin(t *testing.T) {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	t.Log(string(body))
-	t.Log(resp.Header.Get("Set-Cookie"))
-	test.CreateHabit(resp.Header.Get("Set-Cookie"))
-}
-
-func TestGetAllHabits(t *testing.T) {
-	user, _ := (&model.User{Username: "test"}).GetUserByUsername()
-	habits, _ := user.GetAllHabits()
-	t.Log(habits)
+	session := resp.Header.Get("Set-Cookie")
+	t.Log(session)
+	{
+		test.GetAllHabit(session, t, a)
+		//test.CreateHabit(session, t, a)
+		test.UpdateHabit(session, t, a)
+		test.UpdateHabitFinishedTime(session, t, a)
+		test.UpdateHabitUnfinishedTime(session, t, a)
+		//test.DeleteHabit(session, t, a)
+	}
 }
 
 func TestTemp(t *testing.T) {
-	test.CreateHabit("")
-
 }

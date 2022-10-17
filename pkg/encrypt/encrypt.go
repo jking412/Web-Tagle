@@ -1,7 +1,7 @@
 package encrypt
 
 import (
-	"fmt"
+	"go-tagle/pkg/logger"
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
 	"time"
@@ -10,7 +10,7 @@ import (
 func EncryptPassword(password string) string {
 	encryptPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
-		fmt.Println("加密失败")
+		logger.WarnString("encrypt", "加密密码失败", err.Error())
 		panic(err)
 	}
 	return string(encryptPassword)
@@ -19,7 +19,7 @@ func EncryptPassword(password string) string {
 func CheckPassword(password string, encryptPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(encryptPassword), []byte(password))
 	if err != nil {
-		fmt.Println("密码错误")
+		logger.InfoString("encrypt", "密码错误", err.Error())
 		return false
 	}
 	return true

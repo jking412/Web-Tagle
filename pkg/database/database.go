@@ -1,7 +1,7 @@
 package database
 
 import (
-	"fmt"
+	"go-tagle/pkg/logger"
 	"go-tagle/pkg/viperlib"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -13,7 +13,7 @@ func ConnectDB() {
 	var err error
 	DB, err = gorm.Open(sqlite.Open(viperlib.GetString("database.dbname")), &gorm.Config{})
 	if err != nil {
-		fmt.Println("数据库初始化失败")
+		logger.ErrorString("database", "连接数据库失败", err.Error())
 		panic(err)
 	}
 }

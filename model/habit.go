@@ -22,11 +22,7 @@ func (h *Habit) TableName() string {
 
 func (h *Habit) Create() error {
 	if err := database.DB.Create(h).Error; err != nil {
-<<<<<<< HEAD
 		logger.WarnString("database", "创建习惯失败", err.Error())
-=======
-		logger.ErrorString("database", "创建习惯失败", err.Error())
->>>>>>> origin/main
 		return err
 	}
 	return nil
@@ -58,11 +54,7 @@ func (h *Habit) UpdateUnfinishedTime() error {
 
 func (h *Habit) Delete() error {
 	if err := database.DB.Delete(h).Error; err != nil {
-<<<<<<< HEAD
 		logger.WarnString("database", "删除习惯失败", err.Error())
-=======
-		logger.ErrorString("database", "删除习惯失败", err.Error())
->>>>>>> origin/main
 		return err
 	}
 	return nil

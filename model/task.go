@@ -29,7 +29,7 @@ func (t *Task) Create() error {
 }
 
 func (t *Task) Update() error {
-	if err := database.DB.Model(&Task{}).Updates(t).Error; err != nil {
+	if err := database.DB.Model(&Task{}).Where("id = ?", t.Id).Updates(t).Error; err != nil {
 		logger.WarnString("database", "更新任务失败", err.Error())
 		return err
 	}

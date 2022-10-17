@@ -19,19 +19,19 @@ func GetAllHabit(session string, t *testing.T, a *assert.Assertions) {
 	t.Log(string(body))
 }
 
-//func CreateHabit(session string, t *testing.T, a *assert.Assertions) {
-//	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/create", strings.NewReader(`{"name":"test"}`))
-//	req.Header.Set("Content-Type", "application/json")
-//	req.Header.Set("Cookie", session)
-//	resp, _ := http.DefaultClient.Do(req)
-//	a.Equal(http.StatusOK, resp.StatusCode)
-//	defer resp.Body.Close()
-//	body, _ := ioutil.ReadAll(resp.Body)
-//	t.Log(string(body))
-//}
+func CreateHabit(session string, t *testing.T, a *assert.Assertions) {
+	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/create", strings.NewReader(`{"name":"test"}`))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Cookie", session)
+	resp, _ := http.DefaultClient.Do(req)
+	a.Equal(http.StatusOK, resp.StatusCode)
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	t.Log(string(body))
+}
 
 func ErrorCreateHabit(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/create", strings.NewReader(`{"nam":"test"}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/create", strings.NewReader(`{"nam":""}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)

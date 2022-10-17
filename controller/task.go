@@ -12,6 +12,7 @@ type TaskCreateReq struct {
 }
 
 type TaskUpdateReq struct {
+	Id             int    `json:"id" valid:"id"`
 	Name           string `json:"name" valid:"name"`
 	Desc           string `json:"desc" valid:"desc"`
 	Difficulty     int    `json:"difficulty" valid:"difficulty"`
@@ -83,6 +84,7 @@ func UpdateTask(c *gin.Context) {
 	session := sessions.Default(c)
 	userId := session.Get("userId").(int)
 	task := &model.Task{
+		Id:             updateTaskReq.Id,
 		Name:           updateTaskReq.Name,
 		Desc:           updateTaskReq.Desc,
 		Difficulty:     updateTaskReq.Difficulty,
@@ -97,7 +99,8 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg": "更新成功",
+		"msg":  "更新成功",
+		"task": task,
 	})
 }
 

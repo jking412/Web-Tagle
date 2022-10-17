@@ -21,6 +21,7 @@ func Register(r *gin.Engine) {
 	}
 
 	r.Use(middleware.Auth())
+
 	habitGroup := r.Group("/habit")
 	{
 		habitGroup.GET("/all", controller.GetAllHabits)

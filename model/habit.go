@@ -42,11 +42,7 @@ func (h *Habit) Update() error {
 
 func (h *Habit) UpdateFinishedTime() error {
 	if err := database.DB.Model(&Habit{}).Where("id = ?", h.Id).Update("finished_time", h.FinishedTime).Error; err != nil {
-<<<<<<< HEAD
 		logger.WarnString("database", "更新习惯失败", err.Error())
-=======
-		logger.ErrorString("database", "更新习惯失败", err.Error())
->>>>>>> origin/main
 		return err
 	}
 	return nil
@@ -54,11 +50,7 @@ func (h *Habit) UpdateFinishedTime() error {
 
 func (h *Habit) UpdateUnfinishedTime() error {
 	if err := database.DB.Model(&Habit{}).Where("id = ?", h.Id).Update("unfinished_time", h.UnFinishedTime).Error; err != nil {
-<<<<<<< HEAD
 		logger.WarnString("database", "更新习惯失败", err.Error())
-=======
-		logger.ErrorString("database", "更新习惯失败", err.Error())
->>>>>>> origin/main
 		return err
 	}
 	return nil

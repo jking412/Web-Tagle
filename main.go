@@ -15,6 +15,8 @@ func main() {
 
 	api.Register(r)
 
+	logger.ErrorString("test", "test", "test")
+
 	err := r.Run(":" + viperlib.GetString("server.port"))
 	if err != nil {
 		logger.ErrorString("web", "启动失败", err.Error())

@@ -8,5 +8,6 @@ import (
 func initDB() {
 	database.ConnectDB()
 	database.DB.AutoMigrate(&model.User{},
-		&model.Habit{})
+		&model.Habit{},
+		&model.Task{})
 }

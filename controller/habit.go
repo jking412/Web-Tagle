@@ -7,10 +7,6 @@ import (
 	"net/http"
 )
 
-type GetHabitsReq struct {
-	UserId int `json:"userId" valid:"userId"`
-}
-
 type CreateHabitReq struct {
 	Name string `json:"name" valid:"name"`
 }
@@ -31,14 +27,9 @@ type DeleteHabitReq struct {
 }
 
 func GetAllHabits(c *gin.Context) {
-	getHabitsReq := &GetHabitsReq{}
-	if err := c.ShouldBindJSON(&getHabitsReq); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"msg": "JSON格式错误",
-		})
-		return
-	}
-	user := &model.User{Id: getHabitsReq.UserId}
+	session := sessions.Default(c)
+	userId := session.Get("userId").(int)
+	user := &model.User{Id: userId}
 	var habits []model.Habit
 	var err error
 	if habits, err = user.GetAllHabits(); err != nil {

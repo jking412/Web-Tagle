@@ -14,6 +14,7 @@ type User struct {
 	Email    string  `json:"email" gorm:"column:email;type:varchar(255)"`
 	Salt     string  `json:"-" gorm:"column:salt;type:varchar(255)"`
 	Habits   []Habit `json:"habits" gorm:"foreignKey:UserId"`
+	Tasks    []Task  `json:"tasks" gorm:"foreignKey:UserId"`
 }
 
 func (u *User) TableName() string {
@@ -37,7 +38,7 @@ func (u *User) Create() error {
 //	}()
 //	if err := tx.Create(u).Error; err != nil {
 //		tx.Rollback()
-//		fmt.Println("创建用户失败")
+//		logger.WarnString("database", "创建用户失败", err.Error())
 //		return err
 //	}
 //	return tx.Commit().Error
@@ -47,7 +48,7 @@ func (u *User) GetUserById() (*User, error) {
 	var user *User
 	err := database.DB.Where("id = ?", u.Id).First(&user).Error
 	if err != nil {
-		logger.ErrorString("database", "获取用户失败", err.Error())
+		logger.WarnString("database", "获取用户失败", err.Error())
 	}
 	return user, err
 }
@@ -55,7 +56,9 @@ func (u *User) GetUserById() (*User, error) {
 func (u *User) GetUserByUsername() (*User, error) {
 	var user *User
 	err := database.DB.Where("username = ?", u.Username).First(&user).Error
-	logger.ErrorString("database", "获取用户失败", err.Error())
+	if err != nil {
+		logger.WarnString("database", "获取用户失败", err.Error())
+	}
 	return user, err
 }
 
@@ -63,7 +66,7 @@ func (u *User) GetUserByEmail() (*User, error) {
 	var user *User
 	err := database.DB.Where("email = ?", u.Email).First(&user).Error
 	if err != nil {
-		logger.ErrorString("database", "获取用户失败", err.Error())
+		logger.WarnString("database", "获取用户失败", err.Error())
 	}
 	return user, err
 }
@@ -83,7 +86,7 @@ func (u *User) IsExistEmail() bool {
 func (u *User) DeleteUserByUsername() error {
 	err := database.DB.Where("username=?", u.Username).Delete(&User{}).Error
 	if err != nil {
-		logger.ErrorString("database", "删除用户失败", err.Error())
+		logger.WarnString("database", "删除用户失败", err.Error())
 	}
 	return err
 }
@@ -92,9 +95,18 @@ func (u *User) GetAllHabits() ([]Habit, error) {
 	var habits []Habit
 	err := database.DB.Model(u).Association("Habits").Find(&habits)
 	if err != nil {
-		logger.ErrorString("database", "获取用户习惯失败", err.Error())
+		logger.WarnString("database", "获取用户习惯失败", err.Error())
 	}
 	return habits, err
+}
+
+func (u *User) GetAllTasks() ([]Task, error) {
+	var tasks []Task
+	err := database.DB.Model(u).Association("Tasks").Find(&tasks)
+	if err != nil {
+		logger.WarnString("database", "获取用户任务失败", err.Error())
+	}
+	return tasks, err
 }
 
 func (u *User) CheckPassword() bool {

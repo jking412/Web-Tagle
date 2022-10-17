@@ -48,7 +48,11 @@ func (u *User) GetUserById() (*User, error) {
 	var user *User
 	err := database.DB.Where("id = ?", u.Id).First(&user).Error
 	if err != nil {
+<<<<<<< HEAD
 		logger.WarnString("database", "获取用户失败", err.Error())
+=======
+		logger.ErrorString("database", "获取用户失败", err.Error())
+>>>>>>> origin/main
 	}
 	return user, err
 }
@@ -56,9 +60,13 @@ func (u *User) GetUserById() (*User, error) {
 func (u *User) GetUserByUsername() (*User, error) {
 	var user *User
 	err := database.DB.Where("username = ?", u.Username).First(&user).Error
+<<<<<<< HEAD
 	if err != nil {
 		logger.WarnString("database", "获取用户失败", err.Error())
 	}
+=======
+	logger.ErrorString("database", "获取用户失败", err.Error())
+>>>>>>> origin/main
 	return user, err
 }
 
@@ -66,7 +74,11 @@ func (u *User) GetUserByEmail() (*User, error) {
 	var user *User
 	err := database.DB.Where("email = ?", u.Email).First(&user).Error
 	if err != nil {
+<<<<<<< HEAD
 		logger.WarnString("database", "获取用户失败", err.Error())
+=======
+		logger.ErrorString("database", "获取用户失败", err.Error())
+>>>>>>> origin/main
 	}
 	return user, err
 }
@@ -86,7 +98,11 @@ func (u *User) IsExistEmail() bool {
 func (u *User) DeleteUserByUsername() error {
 	err := database.DB.Where("username=?", u.Username).Delete(&User{}).Error
 	if err != nil {
+<<<<<<< HEAD
 		logger.WarnString("database", "删除用户失败", err.Error())
+=======
+		logger.ErrorString("database", "删除用户失败", err.Error())
+>>>>>>> origin/main
 	}
 	return err
 }

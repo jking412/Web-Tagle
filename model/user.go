@@ -3,6 +3,7 @@ package model
 import (
 	"go-tagle/pkg/database"
 	"go-tagle/pkg/encrypt"
+	"go-tagle/pkg/logger"
 	"gorm.io/gorm"
 )
 
@@ -21,6 +22,7 @@ func (u *User) TableName() string {
 
 func (u *User) Create() error {
 	if err := database.DB.Create(u).Error; err != nil {
+		logger.ErrorString("database", "创建用户失败", err.Error())
 		return err
 	}
 	return nil
@@ -44,18 +46,25 @@ func (u *User) Create() error {
 func (u *User) GetUserById() (*User, error) {
 	var user *User
 	err := database.DB.Where("id = ?", u.Id).First(&user).Error
+	if err != nil {
+		logger.ErrorString("database", "获取用户失败", err.Error())
+	}
 	return user, err
 }
 
 func (u *User) GetUserByUsername() (*User, error) {
 	var user *User
 	err := database.DB.Where("username = ?", u.Username).First(&user).Error
+	logger.ErrorString("database", "获取用户失败", err.Error())
 	return user, err
 }
 
 func (u *User) GetUserByEmail() (*User, error) {
 	var user *User
 	err := database.DB.Where("email = ?", u.Email).First(&user).Error
+	if err != nil {
+		logger.ErrorString("database", "获取用户失败", err.Error())
+	}
 	return user, err
 }
 
@@ -73,12 +82,18 @@ func (u *User) IsExistEmail() bool {
 
 func (u *User) DeleteUserByUsername() error {
 	err := database.DB.Where("username=?", u.Username).Delete(&User{}).Error
+	if err != nil {
+		logger.ErrorString("database", "删除用户失败", err.Error())
+	}
 	return err
 }
 
 func (u *User) GetAllHabits() ([]Habit, error) {
 	var habits []Habit
 	err := database.DB.Model(u).Association("Habits").Find(&habits)
+	if err != nil {
+		logger.ErrorString("database", "获取用户习惯失败", err.Error())
+	}
 	return habits, err
 }
 

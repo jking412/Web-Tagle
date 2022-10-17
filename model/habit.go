@@ -1,8 +1,8 @@
 package model
 
 import (
-	"fmt"
 	"go-tagle/pkg/database"
+	"go-tagle/pkg/logger"
 )
 
 type Habit struct {
@@ -22,7 +22,7 @@ func (h *Habit) TableName() string {
 
 func (h *Habit) Create() error {
 	if err := database.DB.Create(h).Error; err != nil {
-		fmt.Println("创建习惯失败")
+		logger.ErrorString("database", "创建习惯失败", err.Error())
 		return err
 	}
 	return nil
@@ -30,7 +30,7 @@ func (h *Habit) Create() error {
 
 func (h *Habit) Update() error {
 	if err := database.DB.Model(&Habit{}).Updates(h).Error; err != nil {
-		fmt.Println("更新习惯失败")
+		logger.ErrorString("database", "更新习惯失败", err.Error())
 		return err
 	}
 	return nil
@@ -38,7 +38,7 @@ func (h *Habit) Update() error {
 
 func (h *Habit) UpdateFinishedTime() error {
 	if err := database.DB.Model(&Habit{}).Where("id = ?", h.Id).Update("finished_time", h.FinishedTime).Error; err != nil {
-		fmt.Println("更新习惯失败")
+		logger.ErrorString("database", "更新习惯失败", err.Error())
 		return err
 	}
 	return nil
@@ -46,7 +46,7 @@ func (h *Habit) UpdateFinishedTime() error {
 
 func (h *Habit) UpdateUnfinishedTime() error {
 	if err := database.DB.Model(&Habit{}).Where("id = ?", h.Id).Update("unfinished_time", h.UnFinishedTime).Error; err != nil {
-		fmt.Println("更新习惯失败")
+		logger.ErrorString("database", "更新习惯失败", err.Error())
 		return err
 	}
 	return nil
@@ -54,7 +54,7 @@ func (h *Habit) UpdateUnfinishedTime() error {
 
 func (h *Habit) Delete() error {
 	if err := database.DB.Delete(h).Error; err != nil {
-		fmt.Println("删除习惯失败")
+		logger.ErrorString("database", "删除习惯失败", err.Error())
 		return err
 	}
 	return nil

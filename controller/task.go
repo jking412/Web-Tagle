@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-tagle/model"
+	"go-tagle/model/user"
 	"net/http"
 )
 
@@ -32,8 +33,8 @@ type TaskDeleteReq struct {
 func GetAllTasks(c *gin.Context) {
 	session := sessions.Default(c)
 	userId := session.Get("userId").(int)
-	user := &model.User{Id: userId}
-	tasks, err := user.GetAllTasks()
+	_user := &user.User{Id: userId}
+	tasks, err := user.GetAllTasks(_user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg": "获取失败",

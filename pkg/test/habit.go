@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-tagle/pkg/viperlib"
+	"go-tagle/pkg/config"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -10,7 +10,7 @@ import (
 )
 
 func GetAllHabit(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("GET", "http://localhost:"+viperlib.GetString("server.port")+"/habit/all", nil)
+	req, _ := http.NewRequest("GET", "http://localhost:"+config.GetString("server.port")+"/habit/all", nil)
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
 	a.Equal(http.StatusOK, resp.StatusCode)
@@ -20,7 +20,7 @@ func GetAllHabit(session string, t *testing.T, a *assert.Assertions) {
 }
 
 func CreateHabit(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/create", strings.NewReader(`{"name":"test"}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/habit/create", strings.NewReader(`{"name":"test"}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
@@ -31,7 +31,7 @@ func CreateHabit(session string, t *testing.T, a *assert.Assertions) {
 }
 
 func ErrorCreateHabit(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/create", strings.NewReader(`{"nam":""}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/habit/create", strings.NewReader(`{"nam":""}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
@@ -42,7 +42,7 @@ func ErrorCreateHabit(session string, t *testing.T, a *assert.Assertions) {
 }
 
 func UpdateHabit(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/update", strings.NewReader(`{"id":10,"name":"testUpdate"}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/habit/update", strings.NewReader(`{"id":10,"name":"testUpdate"}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
@@ -53,7 +53,7 @@ func UpdateHabit(session string, t *testing.T, a *assert.Assertions) {
 }
 
 func UpdateHabitFinishedTime(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/finish", strings.NewReader(`{"Id":10,"finishedTime":1}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/habit/finish", strings.NewReader(`{"Id":10,"finishedTime":1}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
@@ -64,7 +64,7 @@ func UpdateHabitFinishedTime(session string, t *testing.T, a *assert.Assertions)
 }
 
 func UpdateHabitUnfinishedTime(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/habit/unfinish", strings.NewReader(`{"Id":10,"unfinishedTime":1}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/habit/unfinish", strings.NewReader(`{"Id":10,"unfinishedTime":1}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)

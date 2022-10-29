@@ -3,3 +3,26 @@ server:
 
 database:
   dbname: tagle.db
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  username:
+  password:
+  db: 0
+
+session:
+  secret:
+
+captcha:
+  key:
+
+github:
+  clientId:
+  clientSecret:
+
+email:
+  host: smtp.qq.com
+  port: 25
+  username:
+  password:

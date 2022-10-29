@@ -13,8 +13,8 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// Logger 全局 Logger 对象
-var Logger *zap.Logger
+// internalLogger 全局 internalLogger 对象
+var internalLogger *zap.Logger
 
 // InitLogger 日志初始化
 func InitLogger(filename string, maxSize, maxBackup, maxAge int, compress bool, logType string, level string) {
@@ -31,16 +31,16 @@ func InitLogger(filename string, maxSize, maxBackup, maxAge int, compress bool, 
 	// 初始化 core
 	core := zapcore.NewCore(getEncoder(), writeSyncer, logLevel)
 
-	// 初始化 Logger
-	Logger = zap.New(core,
+	// 初始化 internalLogger
+	internalLogger = zap.New(core,
 		zap.AddCaller(),                   // 调用文件和行号，内部使用 runtime.Caller
 		zap.AddCallerSkip(1),              // 封装了一层，调用文件去除一层(runtime.Caller(1))
 		zap.AddStacktrace(zap.ErrorLevel), // Error 时才会显示 stacktrace
 	)
 
 	// 将自定义的 logger 替换为全局的 logger
-	// zap.L().Fatal() 调用时，就会使用我们自定的 Logger
-	zap.ReplaceGlobals(Logger)
+	// zap.L().Fatal() 调用时，就会使用我们自定的 internalLogger
+	zap.ReplaceGlobals(internalLogger)
 }
 
 // getEncoder 设置日志存储格式
@@ -101,30 +101,30 @@ func Dump(value interface{}, msg ...string) {
 	valueString := jsonString(value)
 	// 判断第二个参数是否传参 msg
 	if len(msg) > 0 {
-		Logger.Warn("Dump", zap.String(msg[0], valueString))
+		internalLogger.Warn("Dump", zap.String(msg[0], valueString))
 	} else {
-		Logger.Warn("Dump", zap.String("data", valueString))
+		internalLogger.Warn("Dump", zap.String("data", valueString))
 	}
 }
 
 // LogIf 当 err != nil 时记录 error 等级的日志
 func LogIf(err error) {
 	if err != nil {
-		Logger.Error("Error Occurred:", zap.Error(err))
+		internalLogger.Error("Error Occurred:", zap.Error(err))
 	}
 }
 
 // LogWarnIf 当 err != nil 时记录 warning 等级的日志
 func LogWarnIf(err error) {
 	if err != nil {
-		Logger.Warn("Error Occurred:", zap.Error(err))
+		internalLogger.Warn("Error Occurred:", zap.Error(err))
 	}
 }
 
 // LogInfoIf 当 err != nil 时记录 info 等级的日志
 func LogInfoIf(err error) {
 	if err != nil {
-		Logger.Info("Error Occurred:", zap.Error(err))
+		internalLogger.Info("Error Occurred:", zap.Error(err))
 	}
 }
 
@@ -133,79 +133,79 @@ func LogInfoIf(err error) {
 //
 //	logger.Debug("Database", zap.String("sql", sql))
 func Debug(moduleName string, fields ...zap.Field) {
-	Logger.Debug(moduleName, fields...)
+	internalLogger.Debug(moduleName, fields...)
 }
 
 // Info 告知类日志
 func Info(moduleName string, fields ...zap.Field) {
-	Logger.Info(moduleName, fields...)
+	internalLogger.Info(moduleName, fields...)
 }
 
 // Warn 警告类
 func Warn(moduleName string, fields ...zap.Field) {
-	Logger.Warn(moduleName, fields...)
+	internalLogger.Warn(moduleName, fields...)
 }
 
 // Error 错误时记录，不应该中断程序，查看日志时重点关注
 func Error(moduleName string, fields ...zap.Field) {
-	Logger.Error(moduleName, fields...)
+	internalLogger.Error(moduleName, fields...)
 }
 
 // Fatal 级别同 Error(), 写完 log 后调用 os.Exit(1) 退出程序
 func Fatal(moduleName string, fields ...zap.Field) {
-	Logger.Fatal(moduleName, fields...)
+	internalLogger.Fatal(moduleName, fields...)
 }
 
 // DebugString 记录一条字符串类型的 debug 日志，调用示例：
 //
 //	logger.DebugString("SMS", "短信内容", string(result.RawResponse))
 func DebugString(moduleName, name, msg string) {
-	Logger.Debug(moduleName, zap.String(name, msg))
+	internalLogger.Debug(moduleName, zap.String(name, msg))
 }
 
 func InfoString(moduleName, name, msg string) {
-	Logger.Info(moduleName, zap.String(name, msg))
+	internalLogger.Info(moduleName, zap.String(name, msg))
 }
 
 func WarnString(moduleName, name, msg string) {
-	Logger.Warn(moduleName, zap.String(name, msg))
+	internalLogger.Warn(moduleName, zap.String(name, msg))
 }
 
 func ErrorString(moduleName, name, msg string) {
-	Logger.Error(moduleName, zap.String(name, msg))
+	internalLogger.Error(moduleName, zap.String(name, msg))
 }
 
 func FatalString(moduleName, name, msg string) {
-	Logger.Fatal(moduleName, zap.String(name, msg))
+	internalLogger.Fatal(moduleName, zap.String(name, msg))
 }
 
 // DebugJSON 记录对象类型的 debug 日志，使用 json.Marshal 进行编码。调用示例：
 //
 //	logger.DebugJSON("Auth", "读取登录用户", auth.CurrentUser())
 func DebugJSON(moduleName, name string, value interface{}) {
-	Logger.Debug(moduleName, zap.String(name, jsonString(value)))
+	internalLogger.Debug(moduleName, zap.String(name, jsonString(value)))
 }
 
 func InfoJSON(moduleName, name string, value interface{}) {
-	Logger.Info(moduleName, zap.String(name, jsonString(value)))
+	internalLogger.Info(moduleName, zap.String(name, jsonString(value)))
 }
 
 func WarnJSON(moduleName, name string, value interface{}) {
-	Logger.Warn(moduleName, zap.String(name, jsonString(value)))
+	internalLogger.Warn(moduleName, zap.String(name, jsonString(value)))
 }
 
 func ErrorJSON(moduleName, name string, value interface{}) {
-	Logger.Error(moduleName, zap.String(name, jsonString(value)))
+	internalLogger.Error(moduleName, zap.String(name, jsonString(value)))
 }
 
 func FatalJSON(moduleName, name string, value interface{}) {
-	Logger.Fatal(moduleName, zap.String(name, jsonString(value)))
+	internalLogger.Fatal(moduleName, zap.String(name, jsonString(value)))
 }
 
 func jsonString(value interface{}) string {
 	b, err := json.Marshal(value)
 	if err != nil {
-		Logger.Error("Logger", zap.String("JSON marshal error", err.Error()))
+		internalLogger.Error("internalLogger", zap.String("JSON marshal error", err.Error()))
 	}
 	return string(b)
 }

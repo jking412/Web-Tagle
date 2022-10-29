@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-tagle/model"
+	"go-tagle/model/user"
 	"net/http"
 )
 
@@ -39,10 +40,10 @@ type DeleteHabitReq struct {
 func GetAllHabits(c *gin.Context) {
 	session := sessions.Default(c)
 	userId := session.Get("userId").(int)
-	user := &model.User{Id: userId}
+	_user := &user.User{Id: userId}
 	var habits []model.Habit
 	var err error
-	if habits, err = user.GetAllHabits(); err != nil {
+	if habits, err = user.GetAllHabits(_user); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg": "获取失败",
 		})

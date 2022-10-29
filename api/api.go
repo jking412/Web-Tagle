@@ -10,14 +10,35 @@ import (
 
 func Register(r *gin.Engine) {
 	r.Use(sessions.Sessions("mysession", session.Store))
-	r.Use(middleware.Cors())
+	//r.Use(middleware.Cors())
 
 	r.Any("/ping", ping)
 
+	uc := new(controller.UserController)
+	hc := new(controller.HomeController)
+
+	r.GET("/", hc.Index)
+
 	userGroup := r.Group("/user")
 	{
-		userGroup.POST("/register", controller.Register)
-		userGroup.POST("/login", controller.Login)
+		userGroup.GET("/register", uc.Register)
+		userGroup.POST("/register", uc.DoRegister)
+		userGroup.GET("/login", uc.Login)
+		userGroup.POST("/login", uc.DoLogin)
+
+		githubGroup := userGroup.Group("/github")
+		{
+			githubGroup.GET("/login", uc.GithubLogin)
+			githubGroup.GET("/oauth2", uc.GithubLoginCallback)
+		}
+
+		emailGroup := userGroup.Group("/email")
+		{
+			emailGroup.GET("/activate", uc.ActivateEmail)
+			emailGroup.GET("/send", uc.SendEmailVerifyCode)
+			emailGroup.GET("/login", uc.EmailLogin)
+			emailGroup.POST("/login", uc.DoEmailLogin)
+		}
 	}
 
 	r.Use(middleware.Auth())

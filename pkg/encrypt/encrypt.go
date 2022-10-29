@@ -3,8 +3,6 @@ package encrypt
 import (
 	"go-tagle/pkg/logger"
 	"golang.org/x/crypto/bcrypt"
-	"math/rand"
-	"time"
 )
 
 func EncryptPassword(password string) string {
@@ -27,15 +25,4 @@ func CheckPassword(password string, encryptPassword string) bool {
 
 func IsEncrypt(password string) bool {
 	return len(password) == 60
-}
-
-func GenerateSalt() string {
-	rand.Seed(time.Now().Unix())
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	b := make([]rune, 32)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
-
 }

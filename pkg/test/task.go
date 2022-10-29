@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-tagle/pkg/viperlib"
+	"go-tagle/pkg/config"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -10,7 +10,7 @@ import (
 )
 
 func GetAllTask(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("GET", "http://localhost:"+viperlib.GetString("server.port")+"/task/all", nil)
+	req, _ := http.NewRequest("GET", "http://localhost:"+config.GetString("server.port")+"/task/all", nil)
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
 	a.Equal(http.StatusOK, resp.StatusCode)
@@ -20,7 +20,7 @@ func GetAllTask(session string, t *testing.T, a *assert.Assertions) {
 }
 
 func CreateTask(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/task/create", strings.NewReader(`{"name":"test"}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/task/create", strings.NewReader(`{"name":"test"}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
@@ -31,7 +31,7 @@ func CreateTask(session string, t *testing.T, a *assert.Assertions) {
 }
 
 func ErrorCreateTask(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/task/create", strings.NewReader(`{"nam":"test"}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/task/create", strings.NewReader(`{"nam":"test"}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
@@ -42,7 +42,7 @@ func ErrorCreateTask(session string, t *testing.T, a *assert.Assertions) {
 }
 
 func UpdateTask(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/task/update", strings.NewReader(`{"id":10,"name":"testUpdate"}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/task/update", strings.NewReader(`{"id":10,"name":"testUpdate"}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
@@ -53,7 +53,7 @@ func UpdateTask(session string, t *testing.T, a *assert.Assertions) {
 }
 
 func UpdateTaskFinishedTime(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/task/finish", strings.NewReader(`{"id":1,"finishedTime":1}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/task/finish", strings.NewReader(`{"id":1,"finishedTime":1}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)
@@ -64,7 +64,7 @@ func UpdateTaskFinishedTime(session string, t *testing.T, a *assert.Assertions) 
 }
 
 func DeleteTask(session string, t *testing.T, a *assert.Assertions) {
-	req, _ := http.NewRequest("POST", "http://localhost:"+viperlib.GetString("server.port")+"/task/delete", strings.NewReader(`{"id":1}`))
+	req, _ := http.NewRequest("POST", "http://localhost:"+config.GetString("server.port")+"/task/delete", strings.NewReader(`{"id":1}`))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", session)
 	resp, _ := http.DefaultClient.Do(req)

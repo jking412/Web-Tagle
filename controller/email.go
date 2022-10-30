@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"go-tagle/conf"
+	"go-tagle/controller/requests"
 	"go-tagle/model/user"
 	"go-tagle/pkg/captcha"
 	"go-tagle/pkg/email"
@@ -11,17 +12,6 @@ import (
 	"net/http"
 	"time"
 )
-
-type SendEmailReq struct {
-	Email        string
-	VerifyCodeId string
-	VerifyCode   string
-}
-
-type EmailLoginReq struct {
-	Email           string `form:"email" valid:"email"`
-	EmailVerifyCode string `form:"email_verify_code"`
-}
 
 func (uc *UserController) EmailLogin(c *gin.Context) {
 	_, ok := session.GetUser(c)
@@ -45,7 +35,7 @@ func (uc *UserController) EmailLogin(c *gin.Context) {
 }
 
 func (uc *UserController) SendEmailVerifyCode(c *gin.Context) {
-	sendEmailReq := &SendEmailReq{
+	sendEmailReq := &requests.SendEmailReq{
 		Email:        c.Query("email"),
 		VerifyCodeId: c.Query("verify_code_id"),
 		VerifyCode:   c.Query("verify_code"),
@@ -79,7 +69,7 @@ func (uc *UserController) SendEmailVerifyCode(c *gin.Context) {
 }
 
 func (uc *UserController) DoEmailLogin(c *gin.Context) {
-	emailLoginReq := &EmailLoginReq{
+	emailLoginReq := &requests.EmailLoginReq{
 		Email:           c.PostForm("email"),
 		EmailVerifyCode: c.PostForm("email_verify_code"),
 	}
@@ -103,7 +93,7 @@ func (uc *UserController) DoEmailLogin(c *gin.Context) {
 }
 
 func (uc *UserController) ActivateEmail(c *gin.Context) {
-	email := c.Query("email")
+	_email := c.Query("email")
 	code := c.Query("code")
 	if code == "" {
 		c.HTML(http.StatusBadRequest, "error", gin.H{
@@ -111,19 +101,19 @@ func (uc *UserController) ActivateEmail(c *gin.Context) {
 		})
 		return
 	}
-	redisCode := redislib.GlobalRedis.Get(email)
+	redisCode := redislib.GlobalRedis.Get(_email)
 	if redisCode == "" || redisCode != code {
 		c.HTML(http.StatusBadRequest, "error", gin.H{
 			"msg": "链接无效",
 		})
 		return
 	}
-	if ok := user.ActivateEmail(email); !ok {
+	if ok := user.ActivateEmail(_email); !ok {
 		c.HTML(http.StatusInternalServerError, "error", gin.H{
 			"msg": "激活失败",
 		})
 		return
 	}
-	redislib.GlobalRedis.Del(email)
+	redislib.GlobalRedis.Del(_email)
 	c.Redirect(http.StatusFound, "/")
 }

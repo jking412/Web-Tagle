@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-tagle/api"
 	"go-tagle/boot"
 	"go-tagle/conf"
 	"go-tagle/pkg/logger"
 	"go-tagle/pkg/template"
+	api "go-tagle/routes"
 )
 
 func main() {

@@ -1,6 +1,29 @@
-package request
+package requests
 
 import "github.com/thedevsaddam/govalidator"
+
+type UserRegisterReq struct {
+	Username        string `valid:"username" form:"username"`
+	Password        string `valid:"password" form:"password"`
+	ConfirmPassword string `form:"confirm_password"`
+	Email           string `valid:"email" form:"email"`
+}
+
+type UserLoginReq struct {
+	Account  string `form:"account" valid:"account"`
+	Password string `form:"password" valid:"password"`
+}
+
+type SendEmailReq struct {
+	Email        string
+	VerifyCodeId string
+	VerifyCode   string
+}
+
+type EmailLoginReq struct {
+	Email           string `form:"email" valid:"email"`
+	EmailVerifyCode string `form:"email_verify_code"`
+}
 
 func ValidateUserRegisterReq(data interface{}) map[string][]string {
 	rules := govalidator.MapData{

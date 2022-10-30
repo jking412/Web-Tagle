@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"go-tagle/controller"
+	"go-tagle/controller/api"
 	"go-tagle/middleware"
 	"go-tagle/pkg/session"
 )
@@ -17,7 +18,19 @@ func Register(r *gin.Engine) {
 	uc := new(controller.UserController)
 	hc := new(controller.HomeController)
 
+	ua := new(api.UserApi)
+
 	r.GET("/", hc.Index)
+
+	apiGroup := r.Group("/api")
+	{
+		apiGroup.GET("/ping", ping)
+		userApiGroup := apiGroup.Group("/user")
+		{
+			userApiGroup.POST("/login", ua.Login)
+			userApiGroup.POST("/register", ua.Register)
+		}
+	}
 
 	userGroup := r.Group("/user")
 	{

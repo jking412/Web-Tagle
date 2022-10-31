@@ -2,8 +2,8 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-tagle/app/core"
 	"go-tagle/conf"
-	"go-tagle/controller/core"
 	"go-tagle/model/user"
 	"go-tagle/pkg/oauth2"
 	"go-tagle/pkg/session"

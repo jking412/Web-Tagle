@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-tagle/controller/core"
+	"go-tagle/app/core"
 	"net/http"
 )
 

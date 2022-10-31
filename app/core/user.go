@@ -2,7 +2,7 @@ package core
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-tagle/controller/requests"
+	"go-tagle/app/requests"
 	"go-tagle/model/user"
 	"go-tagle/pkg/email"
 	"go-tagle/pkg/session"

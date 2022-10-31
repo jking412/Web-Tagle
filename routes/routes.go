@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"go-tagle/controller"
-	"go-tagle/controller/api"
+	"go-tagle/app/api"
+	controller2 "go-tagle/app/controller"
 	"go-tagle/middleware"
 	"go-tagle/pkg/session"
 )
@@ -15,8 +15,8 @@ func Register(r *gin.Engine) {
 
 	r.Any("/ping", ping)
 
-	uc := new(controller.UserController)
-	hc := new(controller.HomeController)
+	uc := new(controller2.UserController)
+	hc := new(controller2.HomeController)
 
 	ua := new(api.UserApi)
 
@@ -29,7 +29,16 @@ func Register(r *gin.Engine) {
 		{
 			userApiGroup.POST("/login", ua.Login)
 			userApiGroup.POST("/register", ua.Register)
+
+			emailGroup := apiGroup.Group("/email")
+			{
+				emailGroup.GET("/captcha", ua.SendCaptcha)
+				emailGroup.POST("/send", ua.SendEmailCaptcha)
+				emailGroup.POST("/login", ua.EmailLogin)
+			}
+
 		}
+
 	}
 
 	userGroup := r.Group("/user")
@@ -58,21 +67,21 @@ func Register(r *gin.Engine) {
 
 	habitGroup := r.Group("/habit")
 	{
-		habitGroup.GET("/all", controller.GetAllHabits)
-		habitGroup.POST("/create", controller.CreateHabit)
-		habitGroup.POST("/update", controller.UpdateHabit)
-		habitGroup.POST("/finish", controller.UpdateHabitFinishedTime)
-		habitGroup.POST("/unfinish", controller.UpdateHabitUnfinishedTime)
-		habitGroup.POST("/delete", controller.DeleteHabit)
+		habitGroup.GET("/all", controller2.GetAllHabits)
+		habitGroup.POST("/create", controller2.CreateHabit)
+		habitGroup.POST("/update", controller2.UpdateHabit)
+		habitGroup.POST("/finish", controller2.UpdateHabitFinishedTime)
+		habitGroup.POST("/unfinish", controller2.UpdateHabitUnfinishedTime)
+		habitGroup.POST("/delete", controller2.DeleteHabit)
 	}
 
 	taskGroup := r.Group("/task")
 	{
-		taskGroup.GET("/all", controller.GetAllTasks)
-		taskGroup.POST("/create", controller.CreateTask)
-		taskGroup.POST("/update", controller.UpdateTask)
-		taskGroup.POST("/finish", controller.UpdateFinishedTime)
-		taskGroup.POST("/delete", controller.DeleteTask)
+		taskGroup.GET("/all", controller2.GetAllTasks)
+		taskGroup.POST("/create", controller2.CreateTask)
+		taskGroup.POST("/update", controller2.UpdateTask)
+		taskGroup.POST("/finish", controller2.UpdateFinishedTime)
+		taskGroup.POST("/delete", controller2.DeleteTask)
 	}
 }
 

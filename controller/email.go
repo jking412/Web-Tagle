@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-tagle/conf"
+	"go-tagle/controller/core"
 	"go-tagle/controller/requests"
 	"go-tagle/model/user"
 	"go-tagle/pkg/captcha"
@@ -10,7 +10,6 @@ import (
 	"go-tagle/pkg/redislib"
 	"go-tagle/pkg/session"
 	"net/http"
-	"time"
 )
 
 func (uc *UserController) EmailLogin(c *gin.Context) {
@@ -19,19 +18,8 @@ func (uc *UserController) EmailLogin(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/")
 		return
 	}
-	id, b64s, err := captcha.GenerateCaptcha()
-	if err != nil {
-		c.HTML(http.StatusInternalServerError, "error", gin.H{
-			"msg": "生成验证码失败",
-		})
-		return
-	}
-	b64s = captcha.RemoveB64sPrefix(b64s)
-	redislib.GlobalRedis.Set(id+id, b64s, time.Minute*time.Duration(conf.RedisDefaultExpireTime))
-	c.HTML(http.StatusOK, "login-email", gin.H{
-		"verifyCodeId": id,
-		"captchaImg":   b64s,
-	})
+	data, statusCode := core.GenerateCaptcha(c)
+	c.HTML(statusCode, "login-email", data)
 }
 
 func (uc *UserController) SendEmailVerifyCode(c *gin.Context) {

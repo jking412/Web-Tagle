@@ -23,13 +23,11 @@ func (uc *UserController) Register(c *gin.Context) {
 }
 
 func (uc *UserController) DoRegister(c *gin.Context) {
-	msg, statusCode := core.Register(c)
+	data, statusCode := core.Register(c)
 	if statusCode == http.StatusOK {
 		c.Redirect(http.StatusFound, "/user/login")
 	} else {
-		c.HTML(statusCode, "error", gin.H{
-			"msg": msg,
-		})
+		c.HTML(statusCode, "error", data)
 	}
 }
 
@@ -43,13 +41,11 @@ func (uc *UserController) Login(c *gin.Context) {
 }
 
 func (uc *UserController) DoLogin(c *gin.Context) {
-	msg, statusCode := core.Login(c)
+	data, statusCode := core.Login(c)
 	if statusCode == http.StatusOK {
 		c.Redirect(http.StatusFound, "/")
 	} else {
-		c.HTML(statusCode, "error", gin.H{
-			"msg": msg,
-		})
+		c.HTML(statusCode, "error", data)
 	}
 }
 
